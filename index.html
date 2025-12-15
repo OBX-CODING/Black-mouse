@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Black Mouse - Younes Mouhoub</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(to bottom right, #202020, #404040);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    .mouse {
+      width: 120px;
+      height: 180px;
+      background: radial-gradient(circle at center, #000 70%, #333);
+      border-radius: 50% 50% 40% 40%;
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6), inset 0 3px 8px rgba(255, 255, 255, 0.2);
+      transition: transform 0.2s ease-out, background 0.3s ease-in-out;
+      z-index: 10;
+    }
+
+    .mouse:hover {
+      transform: scale(1.1);
+      background: radial-gradient(circle at center, #111 60%, #444);
+    }
+
+    .wheel {
+      width: 20px;
+      height: 50px;
+      background: linear-gradient(to bottom, #555, #222);
+      border-radius: 12px;
+      margin-top: 25px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      animation: wheel-glow 1.5s infinite alternate;
+    }
+
+    @keyframes wheel-glow {
+      0% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      }
+      100% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .button {
+      width: 70px;
+      height: 30px;
+      background: #222;
+      border-radius: 15px;
+      margin-top: auto;
+      margin-bottom: 15px;
+      box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    .ripple {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      opacity: 0;
+      animation: ripple-effect 1s ease-out;
+    }
+
+    @keyframes ripple-effect {
+      0% {
+        opacity: 0.8;
+        transform: scale(0);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(2.5);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mouse">
+    <div class="wheel"></div>
+    <div class="button"></div>
+  </div>
+
+  <script>
+    const mouse = document.querySelector('.mouse');
+
+    // Create a ripple effect on click
+    document.addEventListener('click', (event) => {
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = `${event.clientX - 60}px`;
+      ripple.style.top = `${event.clientY - 60}px`;
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 1000); // Remove ripple after animation
+    });
+
+    // Make the mouse follow the cursor smoothly
+    let mouseX = 0, mouseY = 0;
+    const followSpeed = 0.1;
+    document.addEventListener('mousemove', (event) => {
+      mouseX = event.clientX - mouse.offsetWidth / 2;
+      mouseY = event.clientY - mouse.offsetHeight / 2;
+    });
+
+    function animateMouse() {
+      const currentX = parseFloat(getComputedStyle(mouse).left) || 0;
+      const currentY = parseFloat(getComputedStyle(mouse).top) || 0;
+
+      const newX = currentX + (mouseX - currentX) * followSpeed;
+      const newY = currentY + (mouseY - currentY) * followSpeed;
+
+      mouse.style.left = `${newX}px`;
+      mouse.style.top = `${newY}px`;
+
+      requestAnimationFrame(animateMouse);
+    }
+    animateMouse();
+  </script>
+</body>
+</html>
